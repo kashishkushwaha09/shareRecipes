@@ -5,8 +5,11 @@ const express=require('express');
 const app=express();
 const cors = require('cors');
 const errorMiddleware=require('./middlewares/errorHandler');
+const authenticateUser=require('./middlewares/authenticateUser');
 const db=require('./utils/db-connection');
 const userRoutes=require('./routes/userRoute');
+const recipeRoute=require('./routes/recipeRoute');
+require('./models'); 
 const morgan=require('morgan');
 const accessLogStream=fs.createWriteStream(
     path.join(__dirname,'access.log'),
@@ -14,6 +17,7 @@ const accessLogStream=fs.createWriteStream(
 );
 app.use(express.static('public'));
 app.use(express.json());
+// app.use(express.urlencoded({ extended: true })); 
 app.use(cors());
 app.use(morgan('combined',{stream:accessLogStream}))
 // Redirect root URL to signup.html
@@ -21,6 +25,7 @@ app.use(morgan('combined',{stream:accessLogStream}))
 //   res.sendFile(path.join(__dirname, 'public', 'signup.html'));
 // });
 app.use('/api/users', userRoutes);
+app.use('/api/recipes',authenticateUser,recipeRoute);
 app.use(errorMiddleware);
 
 

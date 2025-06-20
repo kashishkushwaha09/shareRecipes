@@ -40,12 +40,15 @@ const Recipe = sequelize.define('Recipe', {
     allowNull: true,
   },
   category: {
-  type: DataTypes.ENUM(
-    'Appetizer', 'Breakfast', 'Lunch', 'Dinner', 'Main Course',
-    'Side Dish', 'Dessert', 'Snack', 'Soup', 'Salad',
-    'Beverage', 'Sauce', 'Bread', 'Rice', 'Pasta'
-  ),
-  allowNull: true
+  type: DataTypes.TEXT,
+  allowNull: false,
+  get() {
+    const raw = this.getDataValue('category');
+    return raw ? JSON.parse(raw) : [];
+  },
+  set(value) {
+    this.setDataValue('category', JSON.stringify(value));
+  }
 },
 dietaryPreference: {
   type: DataTypes.ENUM(
@@ -56,11 +59,11 @@ dietaryPreference: {
     'dairy-free',
     'nut-free'
   ),
-  allowNull: true
+  allowNull: false
 },
 difficulty: {
   type: DataTypes.ENUM('easy', 'medium', 'hard'),
-  allowNull: true,
+  allowNull: false,
 }
 
 }, {
